@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/eye.png</file>
+        <file>images/eye-blocked.png</file>
+        <file>images/lock.png</file>
+        <file>images/user.png</file>
+        <file>images/logo.png</file>
+        <file>images/eye-blocked-hover.png</file>
+        <file>images/eye-hover.png</file>
+        <file>images/appico.ico</file>
+    </qresource>
+</RCC>
