@@ -1,0 +1,21 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/eye.png</file>
+        <file>images/eye-blocked.png</file>
+        <file>images/lock.png</file>
+        <file>images/user.png</file>
+        <file>images/logo.png</file>
+        <file>images/eye-blocked-hover.png</file>
+        <file>images/eye-hover.png</file>
+        <file>images/appico.ico</file>
+        <file>images/left-arrow.png</file>
+        <file>images/right-arrow.png</file>
+        <file>images/example.svg</file>
+        <file>images/calendar.svg</file>
+        <file>images/settings.svg</file>
+        <file>images/stats.svg</file>
+        <file>images/calendar-white.svg</file>
+        <file>images/settings-white.svg</file>
+        <file>images/stats-white.svg</file>
+    </qresource>
+</RCC>
