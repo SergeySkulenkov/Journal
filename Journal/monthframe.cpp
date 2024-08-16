@@ -3,6 +3,7 @@
 #include <QDate>
 #include <QAbstractItemView>
 #include <QStyledItemDelegate>
+#include "stylehelper.h"
 
 MonthFrame::MonthFrame(QWidget *parent)
     : QFrame(parent)
@@ -90,6 +91,8 @@ void MonthFrame::setup()
     ui->nextButton->setToolTip("Следующий месяц");
     ui->prevButton->setToolTip("Предыдущий месяц");
     ui->addButton->setToolTip("Добавить тренировку");
+
+    this->setStyleSheet(StyleHelper::getMonthFramleStyle());
 
 }
 

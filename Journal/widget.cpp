@@ -317,7 +317,7 @@ void Widget::initInterface()
     monthFrame = new MonthFrame;
     ui->selectMonthLayout->addWidget(monthFrame);                                   //Добавляем видежт в компоновщик
     monthFrame->hide();                                                             //Скрываем его, чтобы он не расщирял окно
-    monthFrame->setStyleSheet(StyleHelper::getMonthFramleStyle());                  //Устанавливаем QSS
+   // monthFrame->setStyleSheet(StyleHelper::getMonthFramleStyle());                  //Устанавливаем QSS
 
     /* Левая "панель" с кнопками */
     ui->leftWidget->setStyleSheet(StyleHelper::getLeftWidgetStyle());               //Внешний вид виджета

@@ -248,12 +248,10 @@ QString StyleHelper::getMonthFramleStyle()
            "    width: 0px;"
            "}"
             "QComboBox QAbstractItemView{"
-            "   outline:0px;"
+                "selection-background-color: #646bee;"
+                // "outline:0px;"
             "}"
-            "QComboBox QAbstractItemView::item:selected {"
-            "   background-color: #646bee;"
-            "   color:#fff;"
-            "}";
+           ;
 }
 
 QString StyleHelper::getLeftWidgetStyle()
