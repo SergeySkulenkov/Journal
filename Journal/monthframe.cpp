@@ -4,6 +4,8 @@
 #include <QAbstractItemView>
 #include <QStyledItemDelegate>
 #include "stylehelper.h"
+#include <QDebug>
+
 
 MonthFrame::MonthFrame(QWidget *parent)
     : QFrame(parent)
@@ -70,10 +72,28 @@ bool MonthFrame::addMonth(int value)
 void MonthFrame::prevMonthSlot()
 {
     addMonth(-1);
+    // emit changeMonthSignal(
+    //     ui->monthComboBox->currentIndex()+1,
+    //     ui->yearComboBox->currentText().toInt()
+    // );
 }
 void MonthFrame::nextMonthSlot()
 {
+    qDebug() << "next";
     addMonth(1);
+    // emit changeMonthSignal(
+    //     ui->monthComboBox->currentIndex()+1,
+    //     ui->yearComboBox->currentText().toInt()
+    // );
+}
+
+void MonthFrame::changeMonthSlot()
+{
+    qDebug() << "change";
+    emit changeMonthSignal(
+        ui->monthComboBox->currentIndex()+1,
+        ui->yearComboBox->currentText().toInt()
+    );
 }
 void MonthFrame::setup()
 {
@@ -88,11 +108,14 @@ void MonthFrame::setup()
     connect(ui->prevButton, &QPushButton::clicked,this,&MonthFrame::prevMonthSlot);
     connect(ui->nextButton, &QPushButton::clicked,this,&MonthFrame::nextMonthSlot);
 
+    connect(ui->monthComboBox, &QComboBox::currentTextChanged,this,&MonthFrame::changeMonthSlot);
+
     ui->nextButton->setToolTip("Следующий месяц");
     ui->prevButton->setToolTip("Предыдущий месяц");
     ui->addButton->setToolTip("Добавить тренировку");
 
     this->setStyleSheet(StyleHelper::getMonthFramleStyle());
+
 
 }
 

@@ -24,6 +24,10 @@ set(PROJECT_SOURCES
         monthframe.ui
         database.h
         database.cpp
+        calendarday.h
+        calendarday.cpp
+        calendardayitemwidget.h
+        calendardayitemwidget.cpp
 
 )
 qt_add_resources(PROJECT_SOURCES
@@ -49,6 +53,7 @@ else()
     else()
         add_executable(Journal
             ${PROJECT_SOURCES}
+
         )
     endif()
 endif()

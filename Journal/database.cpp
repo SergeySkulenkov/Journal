@@ -3,6 +3,7 @@
 #include <QFile>
 #include <QDateTime>
 
+
 DataBase::DataBase(QObject *parent)
     : QObject{parent}
 {
@@ -51,6 +52,61 @@ bool DataBase::connectDb()
     }
 }
 
+int DataBase::login(const std::string &name, const std::string &password)
+{
+    std::string sql = "SELECT id FROM users WHERE name='"+name+"' and password='"+password+"'";
+    sqlite3_stmt *stmt;
+    int rc = sqlite3_prepare_v2(db, sql.c_str() ,-1, &stmt, NULL);
+    if( rc != SQLITE_OK ){
+        qDebug() << "Не удалось выполнить запрос к базе данных " << sql.c_str();
+
+    }
+    while(sqlite3_step(stmt) == SQLITE_ROW )
+    {
+        return reinterpret_cast<const int> (sqlite3_column_int(stmt,0));
+    }
+    sqlite3_finalize(stmt);
+    return 0;
+}
+DataBase::TreningsInMonth DataBase::getTreings(int month, int year)
+{
+    TreningsInMonth map;
+    std::string sql = "SELECT * FROM trenings WHERE year="+std::to_string(year)+
+                      " and month="+std::to_string(month)+" ORDER BY day, time";
+    sqlite3_stmt *stmt;
+    int rc = sqlite3_prepare_v2(db, sql.c_str() ,-1, &stmt, NULL);
+    if( rc != SQLITE_OK ){
+        qDebug() << "Не удалось выполнить запрос к базе данных " << sql.c_str();
+        return map;
+    }
+
+    int dayNum = 0;
+    QVector <Trening> vec;
+    while(sqlite3_step(stmt) == SQLITE_ROW )
+    {
+        Trening trening;
+        trening.type = reinterpret_cast<const int> (sqlite3_column_int(stmt,1));
+        trening.name = reinterpret_cast<const char*> (sqlite3_column_text(stmt,2));
+        trening.place = reinterpret_cast<const char*> (sqlite3_column_text(stmt,3));
+        trening.time = reinterpret_cast<const char*> (sqlite3_column_text(stmt,7));
+        trening.day  = sqlite3_column_int(stmt,6);
+        if(dayNum != trening.day){
+            if(vec.size() > 0)
+                map.insert(dayNum, vec);
+            vec.clear();
+            dayNum = trening.day;
+        }
+        vec.append(trening);
+    }
+    sqlite3_finalize(stmt);
+    if(vec.size()>0){
+        map.insert(dayNum, vec);
+    }
+
+
+    return map;
+}
+
 bool DataBase::openDb()
 {
     if(sqlite3_open(fname.toStdString().c_str(), &db) == SQLITE_OK){
@@ -68,13 +124,33 @@ bool DataBase::restoreDb()
 {
     if(!openDb())
         return false;
-    QString sql[] = {"CREATE TABLE users ("
+    QString sql[] = {
+        "CREATE TABLE users ("
         "id         INTEGER PRIMARY KEY AUTOINCREMENT,"
         "name       TEXT NOT NULL,"
         "password   TEXT"
         ");",
         "INSERT INTO users (name, password) "
-        "VALUES ('user','123456');"
+        "VALUES ('user','123456');",
+        "CREATE TABLE trenings ("
+        "id          INTEGER PRIMARY KEY AUTOINCREMENT,"
+        "type        INTEGER,"
+        "name        TEXT NOT NULL,"
+        "place       TEXT,"
+        "year        INTGER,"
+        "month       INTGER,"
+        "day         INTGER,"
+        "time        TEXT,"
+        "duration    INTEGER,"
+        "description TEXT,"
+        "keywords    TEXT"
+        ");",
+        "INSERT INTO trenings (type, name, place, year, month, day, time, duration, description, keywords) "
+        "VALUES (1,'Тренировка для примера 1','Где-то там', 2025, 4, 12, '10:00', 90,'Короктое описание.', ',пример 1, утро,');",
+        "INSERT INTO trenings (type, name, place, year, month, day, time, duration, description, keywords) "
+        "VALUES (2,'Тренировка для примера 2','Где-то здесь', 2025, 4, 12,  '18:00', 90,'Короктое описание 2.', ',пример 1, вечер,');",
+        "INSERT INTO trenings (type, name, place, year, month, day, time, duration, description, keywords) "
+        "VALUES (1,'Тренировка для примера 3','Где-то здесь', 2025, 4, 18,  '18:00', 90,'Короктое описание 3.', ',пример 2, вечер,');"
 
     };
 

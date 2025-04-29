@@ -3,6 +3,7 @@
 
 #include <QFrame>
 
+
 namespace Ui {
 class MonthFrame;
 }
@@ -29,6 +30,7 @@ signals:
 private slots:
     void prevMonthSlot();
     void nextMonthSlot();
+    void changeMonthSlot();
 private:
     Ui::MonthFrame *ui;
 

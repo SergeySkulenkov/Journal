@@ -9,6 +9,11 @@
 #include "stylehelper.h"
 #include "monthframe.h"
 #include <QVBoxLayout>
+#include "calendarday.h"
+#include "calendardayitemwidget.h"
+#include <QLayoutItem>
+#include <QScrollBar>
+
 
 
 
@@ -21,6 +26,7 @@ Widget::Widget(QWidget *parent)
     if(!db.connectDb()){
         qDebug() << "Не удалось соединиться с базой данных!";
     }
+    StyleHelper::addFonts();
     initInterface();
 
 }
@@ -197,6 +203,14 @@ void Widget::changeCurrentPageSlot()
     }
 }
 
+void Widget::changeCurrentDaySLot(CalendarDay *ptr)
+{
+    for(int i=0;i < scrollBox->count()-1; i++){
+        CalendarDay *cDay = qobject_cast<CalendarDay*>(scrollBox->itemAt(i)->widget());
+        cDay->setSelected(cDay == ptr);
+    }
+}
+
 
 
 
@@ -317,6 +331,7 @@ void Widget::initInterface()
     monthFrame = new MonthFrame;
     ui->selectMonthLayout->addWidget(monthFrame);                                   //Добавляем видежт в компоновщик
     monthFrame->hide();                                                             //Скрываем его, чтобы он не расщирял окно
+    connect(monthFrame, &MonthFrame::changeMonthSignal, this, &Widget::resetCurrentMonth);
    // monthFrame->setStyleSheet(StyleHelper::getMonthFramleStyle());                  //Устанавливаем QSS
 
     /* Левая "панель" с кнопками */
@@ -353,12 +368,14 @@ void Widget::initInterface()
     ui->stackedWidget->setCurrentWidget(ui->calendarPage);                          //Текущая страница Календарь
 
     /* ScrollArea календаря */
-    QVBoxLayout* scrollBox = new QVBoxLayout;                                       //Готовим вертиклаьный компоновщик
+    scrollBox = new QVBoxLayout;                                                    //Готовим вертиклаьный компоновщик
     ui->scrollAreaWidgetContents->setLayout(scrollBox);                             //Устанавливаем компоновщик в качестве компоновщика
                                                                                     //scrollAreaWidgetContents
-    scrollBox->addWidget(new QLabel("Пример"));                                     //В качестве примера добавляем в компоновщик QLabel
-    scrollBox->addStretch();                                                        //Добавляем в компоновщик спэйсер
-
+    ui->scrollArea->verticalScrollBar()->setSingleStep(10);
+    resetCurrentMonth(
+        QDate::currentDate().month(),
+        QDate::currentDate().year()
+    );
 
 }
 
@@ -377,7 +394,8 @@ void Widget::windowResize()
 
 bool Widget::loginValid()
 {
-    if(ui->loginEdit->text()=="user" && ui->passwordEdit->text() == "123456"){
+    userId = db.login(ui->loginEdit->text().toStdString(), ui->passwordEdit->text().toStdString());
+    if(userId){
         return true;
     }else{
         return false;
@@ -406,6 +424,40 @@ void Widget::resetPasswordModeButton(PasswordModeType type)
             ui->passwordModeButton->setIcon(QIcon(":/images/eye-blocked-hover.png"));
         break;
     }
+}
+
+void Widget::resetCurrentMonth(int m, int y)
+{
+    //Отображение списка дней текущего месяца
+    DataBase::TreningsInMonth map = db.getTreings(m,y);
+    int maxDay = QDate(y,m,1).daysInMonth();
+
+    //Очищаем компоновщик
+    if(scrollBox->count()>0)
+        scrollBox->takeAt(scrollBox->count()-1);
+    while(scrollBox->count()>0){
+        scrollBox->itemAt(0)->widget()->deleteLater();
+        scrollBox->takeAt(0);
+    }
+
+    //Добавляем виджеты по дням
+    for(int d = 1; d<= maxDay; d++){
+        CalendarDay *day = new CalendarDay;
+        day->setDate(QDate(y,m,d));
+        connect(day,&CalendarDay::changeCurrentDaySignal, this, &Widget::changeCurrentDaySLot);
+        scrollBox->addWidget(day);
+        if(map.contains(d)){
+            //Если день содержит записи о тренировках, добавляем их
+            foreach(auto& item, map[d]){
+                CalendarDayItemWidget* cdItem = new CalendarDayItemWidget(item.type, item.time, item.name);
+                day->addCalendarDayItemWidget(cdItem);
+                cdItem->setStyleSheet(StyleHelper::getCalendarDayItemWidgetStyle());
+            }
+        }
+    }
+
+    scrollBox->addStretch();
+
 }
 
 

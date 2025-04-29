@@ -1,5 +1,12 @@
 #include "stylehelper.h"
 #include <QString>
+#include <QFontDatabase>
+
+void StyleHelper::addFonts()
+{
+    QFontDatabase::addApplicationFont(":/fonts/Roboto-Medium.ttf");
+    QFontDatabase::addApplicationFont(":/fonts/Roboto-Regular.ttf");
+}
 
 QString StyleHelper::getMainStyle()
 {
@@ -151,7 +158,34 @@ QString StyleHelper::getMainStyle()
            "}"
            "QTabWidget#infoTabWidget::pane{"
            "    background:#fff;"
-           "}";
+           "}"
+           "QScrollBar:vertical {"
+            "border: none;"
+            "background: #eee;"
+            "width: 12px;"
+           "border-radius:6px;"
+    "margin:6px 0px 6px 0px;"
+    "}"
+    "QScrollBar::handle:vertical {\
+    background: #ccc;\
+        min-height: 20px;\
+    border-radius:6px;\
+    }\
+    QScrollBar::handle:vertical:hover {\
+        background: #6d54e0;\
+    }\
+    QScrollBar::add-line:vertical {\
+        border:none;\
+        height:0px;\
+    }\
+    \
+    QScrollBar::sub-line:vertical {\
+        border:none;\
+        height:0px;\
+    }\
+    QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {\
+    background: none;\
+    }";
 
 
 
@@ -249,7 +283,7 @@ QString StyleHelper::getMonthFramleStyle()
            "}"
             "QComboBox QAbstractItemView{"
                 "selection-background-color: #646bee;"
-                // "outline:0px;"
+                "outline:0px;"
             "}"
            ;
 }
@@ -319,5 +353,69 @@ QString StyleHelper::getSettingsButtonStyle(bool active)
            "}";
 }
 
+QString StyleHelper::getCalendarDayStyle()
+{
+    return "QWidget#mainWidget{"
+           "    background:#fff;"
+           "    border-radius:3px;"
+           "}";
+}
+
+QString StyleHelper::getCalendarDaySelectedStyle()
+{
+    return "QWidget#mainWidget{"
+           "    background:#fff;"
+           "    border-radius:3px;"
+           "    border:1px solid #545bde;"
+           "}";
+}
+
+QString StyleHelper::getCalendarCurrentDayStyle()
+{
+    return "QWidget#mainWidget{"
+           "    background:#efefff;"
+           "    border-radius:3px;"
+           "}"
+           "QLabel#dayLabel{"
+           "    background:#efefff;"
+           "}";
+}
+
+QString StyleHelper::getCalendarCurrentSelectedDayStyle()
+{
+    return "QWidget#mainWidget{"
+           "    background:#efefff;"
+           "    border-radius:3px;"
+           "    border:1px solid #545bde;"
+           "}"
+           "QLabel#dayLabel{"
+           "    background:#efefff;"
+           "}";
+}
+
+QString StyleHelper::getCalendarDayNumberStyle()
+{
+    return "color:#aaa; font-size:24px; text-align:center;";
+}
+
+QString StyleHelper::getCalendarDayNameStyle()
+{
+    return "color:#aaa; font-size:12px;";
+}
+
+QString StyleHelper::getCalendarDayItemWidgetStyle()
+{
+    return "CalendarDayItemWidget{"
+           "    background: #fafafa;"
+           "}"
+           "QLabel{background:transparent;"
+           "    font-family:'Roboto', sans-serif;"
+           "    font-size:14px;"
+           "    color:#aaa;"
+           "}"
+           "CalendarDayItemWidget::hover{"
+           "    background: #eeeeee;"
+           "}";
+}
 
 

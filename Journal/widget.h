@@ -4,6 +4,7 @@
 #include <QWidget>
 #include "database.h"
 
+
 QT_BEGIN_NAMESPACE
 namespace Ui {
 class Widget;
@@ -12,6 +13,8 @@ QT_END_NAMESPACE
 
 class QEvent;
 class MonthFrame;
+class QVBoxLayout;
+class CalendarDay;
 
 class Widget : public QWidget
 {
@@ -36,7 +39,8 @@ private slots:
     void changePasswordModeSlot();
     void pressReturnSlot();
     void changeCurrentPageSlot();
-
+    void changeCurrentDaySLot(CalendarDay *ptr);
+    void resetCurrentMonth(int m, int y);
 private:
     Ui::Widget *ui;
     const QString loginPlaceholderText    = "Имя пользователя";
@@ -48,10 +52,13 @@ private:
 
     void resetPasswordModeButton(PasswordModeType type);
 
-    //-------------------------------
-
     MonthFrame* monthFrame;
     DataBase db;                           //Объект для взаимодействия с базой данных
+    int userId;
+
+    QVBoxLayout* scrollBox;
+
+
 
 
 
